@@ -23,17 +23,18 @@ NOTION_MCP_HEADERS = json.dumps(
     {"Authorization": f"Bearer {NOTION_API_KEY}", "Notion-Version": "2022-06-28"}
 )
 
-root_agent = Agent(
-    model="gemini-2.0-flash",
-    name="Notion_MCP_Agent",
-    instruction=NOTION_PROMPT,
-    tools=[
-        MCPToolset(
+mcp_toolset = MCPToolset(
             connection_params=StdioServerParameters(
                 command="npx",
                 args=["-y", "@notionhq/notion-mcp-server"],
                 env={"OPENAPI_MCP_HEADERS": NOTION_MCP_HEADERS},
             )
-        ),
+        )
+
+root_agent = Agent(
+    model="gemini-2.0-flash",
+    name="Notion_MCP_Agent",
+    instruction=NOTION_PROMPT,
+    tools=[mcp_toolset
     ],
 )

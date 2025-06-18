@@ -38,7 +38,8 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row  # To access columns by name
     return conn
 
-
+# We are adding a dummy_param here because we're cannot have empty parameters in MCP Tools (it's a bug in the ADK)
+# If we are using optional or default values, the code will still break
 def list_db_tables(dummy_param: str) -> dict:
     """Lists all tables in the SQLite database.
 
@@ -232,6 +233,7 @@ async def list_mcp_tools() -> list[mcp_types.Tool]:
 
 
 @app.call_tool()
+# Tabel Name  + Specific Arguments pertaining the tool being used
 async def call_mcp_tool(name: str, arguments: dict) -> list[mcp_types.TextContent]:
     """MCP handler to execute a tool call requested by an MCP client."""
     logging.info(
@@ -276,6 +278,7 @@ async def call_mcp_tool(name: str, arguments: dict) -> list[mcp_types.TextConten
 # --- MCP Server Runner ---
 async def run_mcp_stdio_server():
     """Runs the MCP server, listening for connections over standard input/output."""
+    # stdio_server is the standard input output server
     async with mcp.server.stdio.stdio_server() as (read_stream, write_stream):
         logging.info(
             "MCP Stdio Server: Starting handshake with client..."
